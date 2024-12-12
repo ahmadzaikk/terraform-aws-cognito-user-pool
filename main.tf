@@ -354,3 +354,23 @@ locals {
   # As default, all auto_verified_attributes will become attributes_require_verification_before_update
   user_attribute_update_settings = var.user_attribute_update_settings == null ? (length(var.auto_verified_attributes) > 0 ? [{ attributes_require_verification_before_update = var.auto_verified_attributes }] : []) : [var.user_attribute_update_settings]
 }
+
+## adding user
+resource "aws_cognito_user" "users" {
+  count = var.create_users ? length(var.users) : 0
+
+  user_pool_id = aws_cognito_user_pool.pool[0].id
+  username     = var.users[count.index].username
+  attributes = {
+    email    = var.users[count.index].email
+    phone_number = lookup(var.users[count.index], "phone_number", null)
+    name     = lookup(var.users[count.index], "name", null)
+  }
+
+  lifecycle {
+    prevent_destroy = true
+  }
+
+  depends_on = [aws_cognito_user_pool.pool]
+}
+
