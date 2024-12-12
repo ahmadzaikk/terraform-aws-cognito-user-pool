@@ -659,3 +659,19 @@ variable "enable_propagate_additional_user_context_data" {
   type        = bool
   default     = false
 }
+variable "create_users" {
+  description = "Set to true to create users in the user pool"
+  type        = bool
+  default     = false
+}
+
+variable "users" {
+  description = "List of users to be created in the user pool"
+  type = list(object({
+    username     = string
+    email        = string
+    phone_number = optional(string)
+    name         = optional(string)
+  }))
+  default = []
+}
